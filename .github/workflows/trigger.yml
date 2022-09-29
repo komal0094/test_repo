@@ -3,4 +3,9 @@ name: trig
 on:
   repository_dispatch:
     types: [deploy_service]
-    
+jobs: 
+  job1: 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "job 1 run"
