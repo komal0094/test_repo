@@ -1,0 +1,6 @@
+name: trig
+
+on:
+  repository_dispatch:
+    types: [deploy_service]
+    
