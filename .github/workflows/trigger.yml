@@ -1,11 +1,37 @@
-name: trig
+name: transfer index.php to remote
+on: 
+  push: 
+    branches: main
 
-on:
-  repository_dispatch:
-    types: [deploy_service]
-jobs: 
-  job1: 
+jobs:
+  job1:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: echo "job 1 run"
+    steps: 
+      - name: checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Run a multi-line script
+        run: |
+         mkdir ../build
+         cp -TR . ../build
+         tar -cvf deploy.tar ../build/
+         
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@master
+        with:
+          host: 18.207.107.199
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          source: 'deploy.tar'
+          target: '/home/ubuntu'
+          
+      - name: run commands on a remote server
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            tar -xvf deploy.tar
+            cd build
+            sudo cp index.php /var/www/html
+          host: 18.207.107.199
+          user: ubuntu
+          key: ${{ secrets.KEY}}
